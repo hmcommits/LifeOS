@@ -13,7 +13,9 @@ app.get('/api/health', (req, res) => {
 });
 
 const actionBiasRouter = require('./routes/actionBias');
+const moneySentinelRouter = require('./routes/moneySentinel');
 app.use('/api/agents', actionBiasRouter);
+app.use('/api/agents', moneySentinelRouter);
 
 app.listen(PORT, () => {
     console.log(`Backend server listening on port ${PORT}`);
