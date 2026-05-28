@@ -12,6 +12,9 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'LifeOS Backend is running' });
 });
 
+const actionBiasRouter = require('./routes/actionBias');
+app.use('/api/agents', actionBiasRouter);
+
 app.listen(PORT, () => {
     console.log(`Backend server listening on port ${PORT}`);
 });
