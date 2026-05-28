@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import './index.css';
 import MoneySentinelWidget from './components/MoneySentinelWidget';
 import TimeTetrisWidget from './components/TimeTetrisWidget';
+import SocialCapitalWidget from './components/SocialCapitalWidget';
 
 function App() {
   const [data, setData] = useState(null);
@@ -37,6 +38,7 @@ function App() {
       <main className="dashboard-grid">
         <MoneySentinelWidget />
         <TimeTetrisWidget />
+        <SocialCapitalWidget />
         <section className="widget action-bias-widget">
           <div className="widget-header">
             <h2>Action-Bias Tracker</h2>
