@@ -18,11 +18,41 @@ async function extractSocialContext() {
     }
 
     try {
-        // 1. Query the CSV using Coral/DataFusion
-        // Replace backslashes with forward slashes for Coral/DataFusion SQL path parsing
-        const sqlPath = csvPath.replace(/\\/g, '/');
-        const query = `SELECT Date, Time, Sender, Message FROM '${sqlPath}' ORDER BY Date DESC, Time DESC LIMIT 50`;
-        const chatLogs = await executeCoralQuery(query);
+        let chatLogs = [];
+        try {
+            // 1. Attempt to Query the CSV using Coral
+            const sqlPath = csvPath.replace(/\\/g, '/');
+            const query = `SELECT Date, Time, Sender, Message FROM '${sqlPath}' ORDER BY Date DESC, Time DESC LIMIT 50`;
+            chatLogs = await executeCoralQuery(query);
+        } catch (coralError) {
+            console.warn("Coral could not read the local CSV directly (missing local_file plugin). Falling back to Node.js fast parsing...");
+            
+            // Fallback: Read CSV natively using Node.js
+            const csvData = fs.readFileSync(csvPath, 'utf8');
+            const lines = csvData.split('\n').filter(l => l.trim() !== '');
+            
+            // Skip header row
+            lines.shift();
+            
+            // Basic CSV parsing regex to handle quoted fields
+            const csvRegex = /(?:^|,)(?:"([^"]*(?:""[^"]*)*)"|([^,]*))/g;
+            
+            chatLogs = lines.map(line => {
+                const parts = [];
+                let match;
+                while (match = csvRegex.exec(line)) {
+                    let val = match[1] !== undefined ? match[1] : match[2];
+                    if (val) val = val.replace(/""/g, '"');
+                    parts.push(val);
+                }
+                return {
+                    Date: parts[0] || '',
+                    Time: parts[1] || '',
+                    Sender: parts[2] || '',
+                    Message: parts[3] || ''
+                };
+            }).reverse().slice(0, 50); // Reverse to get most recent 50
+        }
 
         if (!chatLogs || chatLogs.length === 0) {
             return { upcomingReminders: [] };
