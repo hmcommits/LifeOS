@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { fetchRecentCommits } = require('../services/githubService');
-const { analyzeDataWithGemini } = require('../geminiIntegration');
+const { analyzeDataWithLocalAi } = require('../localAiIntegration');
 
 router.get('/action-bias', async (req, res) => {
     try {
@@ -53,7 +53,7 @@ router.get('/action-bias', async (req, res) => {
             Do not include any markdown formatting like \`\`\`json. Return only the JSON string.
         `;
 
-        const geminiResponseText = await analyzeDataWithGemini(prompt, {});
+        const geminiResponseText = await analyzeDataWithLocalAi(prompt, {});
         
         let geminiAnalysis;
         try {

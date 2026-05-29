@@ -1,4 +1,4 @@
-const { analyzeDataWithGemini } = require('../geminiIntegration');
+const { analyzeDataWithLocalAi } = require('../localAiIntegration');
 
 /**
  * Service to orchestrate the Social Capital Keeper feature.
@@ -37,7 +37,7 @@ Return ONLY a raw, valid JSON object with exactly this structure, do not wrap in
 
     try {
         // 3. Pass to Gemini
-        let geminiResponseText = await analyzeDataWithGemini(prompt, {});
+        let geminiResponseText = await analyzeDataWithLocalAi(prompt, {});
         
         // Clean markdown blocks if Gemini returns them
         geminiResponseText = geminiResponseText.replace(/```json/g, '').replace(/```/g, '').trim();

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { fetchRecentEmails, fetchBudgetStatus } = require('../services/moneySentinelService');
-const { analyzeDataWithGemini } = require('../geminiIntegration');
+const { analyzeDataWithLocalAi } = require('../localAiIntegration');
 
 router.get('/money-sentinel', async (req, res) => {
     try {
@@ -74,7 +74,7 @@ router.get('/money-sentinel', async (req, res) => {
             Do not include any markdown formatting like \`\`\`json. Return only the JSON string.
         `;
 
-        const geminiResponseText = await analyzeDataWithGemini(prompt, {});
+        const geminiResponseText = await analyzeDataWithLocalAi(prompt, {});
         
         let geminiAnalysis;
         try {

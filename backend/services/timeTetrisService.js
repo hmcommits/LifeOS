@@ -1,6 +1,6 @@
 const { google } = require('googleapis');
 require('dotenv').config();
-const { analyzeDataWithGemini } = require('../geminiIntegration');
+const { analyzeDataWithLocalAi } = require('../localAiIntegration');
 
 const oauth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
@@ -81,7 +81,7 @@ Return ONLY a raw, valid JSON object with exactly this structure, do not wrap in
 }`;
 
     try {
-        let geminiResponseText = await analyzeDataWithGemini(prompt, {});
+        let geminiResponseText = await analyzeDataWithLocalAi(prompt, {});
         geminiResponseText = geminiResponseText.replace(/```json/g, '').replace(/```/g, '').trim();
         const optimizedData = JSON.parse(geminiResponseText);
         return optimizedData;
