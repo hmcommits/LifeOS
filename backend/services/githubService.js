@@ -11,7 +11,7 @@ async function verifyRepository() {
 }
 
 async function fetchRecentCommits() {
-    const query = "SELECT sha, author__login, authored_date, message FROM github.commits WHERE owner = 'hmbitcyber' AND repo = 'lifeos-dummy-data' LIMIT 5";
+    const query = "SELECT sha, author__login, commit__author__date, commit__message FROM github.commits WHERE owner = 'hmbitcyber' AND repo = 'lifeos-dummy-data' LIMIT 5";
     return await executeCoralQuery(query);
 }
 
