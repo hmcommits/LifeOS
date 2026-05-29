@@ -134,17 +134,16 @@ function App() {
           </div>
           <div className="architecture-panel">
             <h3>Under the Hood ⚙️</h3>
-            <p><strong>What is this?</strong> The Action-Bias tracker monitors if you are mindlessly consuming content (YouTube/articles) versus actually building and executing ideas.</p>
-            <p><strong>How Coral Works:</strong> Instead of building complex REST API integrations for GitHub, we use a fascinating tool called <strong>Coral</strong>. Coral allows us to query live APIs simply by writing SQL! It translates SQL into the correct API endpoints on the fly.</p>
+            <p><strong>The Goal:</strong> Stop doom-scrolling, start building. This widget tracks your actual execution vs consumption.</p>
+            <p><strong>Coral Magic:</strong> To fetch your GitHub activity, we don't write complex API code. We use <strong>Coral</strong>, an amazing tool that lets us query live internet APIs using plain old SQL! It instantly translates SQL into the exact web requests needed.</p>
             <div className="code-block">
               <code>
-                SELECT sha, commit__message<br/>
-                FROM github.commits<br/>
-                WHERE owner = 'hmbitcyber'<br/>
-                LIMIT 5;
+                <span className="sql-keyword">SELECT</span> sha, commit__message<br/>
+                <span className="sql-keyword">FROM</span> github.commits<br/>
+                <span className="sql-keyword">WHERE</span> owner = 'hmbitcyber'<br/>
+                <span className="sql-keyword">LIMIT</span> 5;
               </code>
             </div>
-            <p><strong>The Brain:</strong> Your local Qwen model then reads these commits and your screen-time to generate a brutally honest score and action plan.</p>
           </div>
         </div>
 
@@ -155,17 +154,15 @@ function App() {
           </div>
           <div className="architecture-panel">
             <h3>Under the Hood ⚙️</h3>
-            <p><strong>What is this?</strong> Money Sentinel catches subscriptions you forgot to cancel before the free trial ends, and summarizes your monthly burn rate.</p>
-            <p><strong>Live Gmail Integration:</strong> This uses the <code>googleapis</code> SDK and an OAuth2 token to securely hook directly into your personal Gmail inbox.</p>
+            <p><strong>The Goal:</strong> Catch sneaky auto-renewals and free trials before they charge your card.</p>
+            <p><strong>Live Data:</strong> We securely hook into your Gmail to scan for incoming receipts and trial emails, acting as your personal financial auditor.</p>
             <div className="code-block">
               <code>
-                const gmail = google.gmail('v1');<br/>
-                const res = await gmail.users.messages.list(&#123;<br/>
-                &nbsp;&nbsp;q: "free trial OR auto-renewal OR receipt"<br/>
+                <span className="js-keyword">const</span> res = <span className="js-keyword">await</span> gmail.users.messages.list(&#123;<br/>
+                &nbsp;&nbsp;q: <span className="js-string">"free trial OR auto-renewal OR receipt"</span><br/>
                 &#125;);
               </code>
             </div>
-            <p><strong>The Brain:</strong> By feeding these raw, unstructured emails into our local Qwen AI, it acts as a financial auditor, extracting exactly how much money is leaving your account without relying on a third-party budgeting app.</p>
           </div>
         </div>
 
@@ -176,18 +173,16 @@ function App() {
           </div>
           <div className="architecture-panel">
             <h3>Under the Hood ⚙️</h3>
-            <p><strong>What is this?</strong> Time-Tetris automatically finds overlapping conflicts in your schedule and resolves them by finding open whitespace in your day.</p>
-            <p><strong>Google Calendar API:</strong> We query your primary calendar to pull down every event happening today.</p>
+            <p><strong>The Goal:</strong> Automatically fix overlapping meetings and find hidden free time in your schedule.</p>
+            <p><strong>Live Data:</strong> We pull down your entire day from Google Calendar to spot conflicts.</p>
             <div className="code-block">
               <code>
-                calendar.events.list(&#123;<br/>
-                &nbsp;&nbsp;calendarId: 'primary',<br/>
-                &nbsp;&nbsp;timeMin: startOfDay,<br/>
-                &nbsp;&nbsp;timeMax: endOfDay<br/>
+                <span className="js-keyword">const</span> events = <span className="js-keyword">await</span> calendar.events.list(&#123;<br/>
+                &nbsp;&nbsp;calendarId: <span className="js-string">'primary'</span>,<br/>
+                &nbsp;&nbsp;timeMin: startOfDay<br/>
                 &#125;);
               </code>
             </div>
-            <p><strong>The Brain:</strong> The AI acts as a sophisticated constraints solver. It looks at the hard blocks (meetings you cannot move) and soft blocks (gym, reading), then mathematically rearranges your day to fit everything seamlessly.</p>
           </div>
         </div>
 
@@ -198,15 +193,14 @@ function App() {
           </div>
           <div className="architecture-panel">
             <h3>Under the Hood ⚙️</h3>
-            <p><strong>What is this?</strong> An automated CRM for your friendships. It reminds you to follow up on promises or gift ideas you casually mentioned in text messages.</p>
-            <p><strong>Data Pipeline:</strong> Currently parsing exported WhatsApp chat logs. It reads unstructured human conversation:</p>
+            <p><strong>The Goal:</strong> Never forget a promise made to a friend. This extracts action items from your casual chats.</p>
+            <p><strong>Live Data:</strong> The AI acts as a smart parser reading raw, unstructured text messages to find hidden deadlines.</p>
             <div className="code-block">
               <code>
-                [14:30] Rahul: Can you look at my resume this weekend?<br/>
-                [14:35] Me: Yeah sure.
+                <span className="js-string">[14:30] Rahul: Can you look at my resume this weekend?</span><br/>
+                <span className="js-string">[14:35] Me: Yeah sure.</span>
               </code>
             </div>
-            <p><strong>The Brain:</strong> The AI parses the human intent, recognizes "this weekend" as a deadline, and creates an actionable JSON object with a specific due date. Never drop the ball on a friendship again.</p>
           </div>
         </div>
 
