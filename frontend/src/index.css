@@ -430,3 +430,102 @@ body {
   border: 2px solid #000;
   display: inline-block;
 }
+
+/* Tab Navigation */
+.tab-nav {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  background: #fff;
+  border: var(--brutal-border);
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px var(--border-color);
+  transition: all 0.1s ease;
+}
+
+.tab-btn:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px var(--border-color);
+}
+
+.tab-btn.active {
+  background: var(--accent-blue);
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px var(--border-color);
+}
+
+/* Tab Content & Architecture Panel */
+.tab-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-content {
+  display: flex;
+  gap: 2rem;
+}
+
+.tab-content.hidden {
+  display: none;
+}
+
+.widget-col {
+  flex: 2;
+  min-width: 0; /* Prevent flex overflow */
+}
+
+.architecture-panel {
+  flex: 1;
+  background: #fff;
+  border: var(--brutal-border);
+  padding: 2rem;
+  box-shadow: var(--brutal-shadow);
+  height: fit-content;
+  min-width: 300px;
+}
+
+.architecture-panel h3 {
+  font-size: 1.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 3px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+.architecture-panel p {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.code-block {
+  background: #000;
+  color: #fff;
+  padding: 1.5rem;
+  border: var(--brutal-border);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  box-shadow: 4px 4px 0px var(--accent-pink);
+}
+
+.sql-keyword, .js-keyword {
+  color: var(--accent-pink);
+  font-weight: bold;
+}
+
+.js-string {
+  color: var(--accent-green);
+}
