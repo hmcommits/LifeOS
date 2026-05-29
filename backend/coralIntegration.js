@@ -10,8 +10,8 @@ const execPromise = util.promisify(exec);
  */
 async function executeCoralQuery(sqlQuery) {
     try {
-        // Run coral sql command. Ensure double quotes around the query.
-        const { stdout, stderr } = await execPromise(`coral sql "${sqlQuery}"`);
+        // Run coral sql command with json format. Ensure double quotes around the query.
+        const { stdout, stderr } = await execPromise(`coral sql --format json "${sqlQuery}"`);
         
         if (stderr) {
             console.warn('Coral Warning/Error:', stderr);

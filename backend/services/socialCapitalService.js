@@ -1,41 +1,53 @@
 const { analyzeDataWithLocalAi } = require('../localAiIntegration');
+const { executeCoralQuery } = require('../coralIntegration');
+const fs = require('fs');
+const path = require('path');
 
 /**
  * Service to orchestrate the Social Capital Keeper feature.
- * Mocks the WhatsApp CSV parsing and Coral SQL execution for Notion/Calendar.
+ * Reads the converted WhatsApp CSV via Coral and passes to Gemini.
  */
 async function extractSocialContext() {
-    // 1. Mock parsing a WhatsApp CSV export
-    const mockChatLogs = [
-        "[25/05/26, 14:30:00] Rahul: Hey, are you free this weekend? I really need someone to look at my resume before I apply to that startup.",
-        "[25/05/26, 14:35:00] Me: Yeah sure, I'll review your resume this weekend.",
-        "[22/03/26, 18:20:00] Aditi: I was browsing a bookstore today and saw 'Atomic Habits'. I've been meaning to read it for months!",
-        "[22/03/26, 18:22:00] Me: Oh nice! It's a great book, you should definitely get it."
-    ];
+    const csvPath = path.join(__dirname, '../data/uploads/whatsapp_data.csv');
+    
+    // Check if the file exists first so we don't throw an ugly error on fresh start
+    if (!fs.existsSync(csvPath)) {
+        return {
+            upcomingReminders: [] // Empty state until user uploads a file
+        };
+    }
 
-    // 2. Construct Prompt for Gemini
-    const prompt = `
+    try {
+        // 1. Query the CSV using Coral/DataFusion
+        // Replace backslashes with forward slashes for Coral/DataFusion SQL path parsing
+        const sqlPath = csvPath.replace(/\\/g, '/');
+        const query = `SELECT Date, Time, Sender, Message FROM '${sqlPath}' ORDER BY Date DESC, Time DESC LIMIT 50`;
+        const chatLogs = await executeCoralQuery(query);
+
+        if (!chatLogs || chatLogs.length === 0) {
+            return { upcomingReminders: [] };
+        }
+
+        // 2. Construct Prompt for Gemini
+        const prompt = `
 You are the Social Capital Keeper, an AI personal CRM.
-The user has exported recent WhatsApp chat logs.
-Here are the chat logs:
-${JSON.stringify(mockChatLogs, null, 2)}
+The user has uploaded recent WhatsApp chat logs.
+Here are the latest messages:
+${JSON.stringify(chatLogs, null, 2)}
 
-Analyze the chat logs and extract any implicit commitments (e.g., reviewing a resume) or preferences/interests (e.g., wanting to read a specific book).
-For commitments, the due date should be inferred from the context (e.g., "this weekend" relative to today: 2026-05-28).
-For preferences/interests, assume it could be a gift idea for an upcoming birthday, and mock a due date in the near future.
+Analyze the chat logs and extract any implicit commitments, promises, or preferences/interests.
 Return ONLY a raw, valid JSON object with exactly this structure, do not wrap in markdown or backticks:
 {
   "upcomingReminders": [
     {
-      "person": "<Name of the person>",
-      "type": "<Follow-up | Birthday | Gift Idea | etc.>",
+      "person": "<Name of the sender>",
+      "type": "<Follow-up | Birthday | Gift Idea | Meeting | etc.>",
       "context": "<Brief explanation of what was discussed>",
-      "dueDate": "YYYY-MM-DD"
+      "dueDate": "YYYY-MM-DD (Estimate a date in the near future if not explicitly stated, relative to today's date: ${new Date().toISOString().split('T')[0]})"
     }
   ]
 }`;
 
-    try {
         // 3. Pass to Gemini
         let geminiResponseText = await analyzeDataWithLocalAi(prompt, {});
         
@@ -46,23 +58,9 @@ Return ONLY a raw, valid JSON object with exactly this structure, do not wrap in
         return insightsData;
     } catch (error) {
         console.error("Error in extractSocialContext:", error);
-        
-        // Fallback mock data in case Gemini fails or rate limits
+        // If something fails (e.g., bad AI response), return empty list instead of hardcoded data
         return {
-            upcomingReminders: [
-                {
-                    person: "Rahul",
-                    type: "Follow-up",
-                    context: "He asked you to review his resume this weekend.",
-                    dueDate: "2026-05-30"
-                },
-                {
-                    person: "Aditi",
-                    type: "Gift Idea / Birthday",
-                    context: "Mentioned she really wanted the book 'Atomic Habits'.",
-                    dueDate: "2026-06-05"
-                }
-            ]
+            upcomingReminders: []
         };
     }
 }
