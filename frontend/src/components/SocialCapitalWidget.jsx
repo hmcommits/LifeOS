@@ -4,6 +4,36 @@ const SocialCapitalWidget = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    setError(null);
+
+    const formData = new FormData();
+    formData.append('chatFile', file);
+
+    try {
+      const response = await fetch('http://localhost:3001/api/agents/upload-chat', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const result = await response.json();
+      setData(result.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,7 +59,7 @@ const SocialCapitalWidget = () => {
       <div className="widget-header">
         <h2>Social Capital Keeper</h2>
         <div className="status-badge status-ok">
-          {loading ? 'Scanning Logs...' : 'CRM Active'}
+          {loading || uploading ? 'Scanning Logs...' : 'CRM Active'}
         </div>
       </div>
 
@@ -49,6 +79,19 @@ const SocialCapitalWidget = () => {
 
       {!loading && !error && data && (
         <div className="widget-content">
+          <div className="upload-section">
+            <label className={`upload-btn ${uploading ? 'disabled' : ''}`}>
+              {uploading ? 'Processing Chat...' : 'Upload WhatsApp Export (.txt)'}
+              <input 
+                type="file" 
+                accept=".txt" 
+                onChange={handleFileUpload} 
+                disabled={uploading} 
+                style={{ display: 'none' }} 
+              />
+            </label>
+          </div>
+
           <div className="reminders-list">
             <h3>Upcoming Relationship Action Items</h3>
             {data.upcomingReminders && data.upcomingReminders.length > 0 ? (

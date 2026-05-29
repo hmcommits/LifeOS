@@ -529,3 +529,36 @@ body {
 .js-string {
   color: var(--accent-green);
 }
+
+/* Upload Button Styles */
+.upload-section {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.upload-btn {
+  background: var(--accent-yellow);
+  border: var(--brutal-border);
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 4px 4px 0px var(--border-color);
+  transition: all 0.1s ease;
+  display: inline-block;
+  text-align: center;
+}
+
+.upload-btn:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px var(--border-color);
+}
+
+.upload-btn.disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: translate(4px, 4px);
+  box-shadow: 0px 0px 0px var(--border-color);
+}
