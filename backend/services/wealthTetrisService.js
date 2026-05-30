@@ -2,18 +2,98 @@ const { analyzeDataWithLocalAi } = require('../localAiIntegration');
 const { executeCoralQuery } = require('../coralIntegration');
 const fs = require('fs');
 const path = require('path');
+const { google } = require('googleapis');
+require('dotenv').config();
+
+const oauth2Client = new google.auth.OAuth2(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET
+);
+
+oauth2Client.setCredentials({
+    refresh_token: process.env.GOOGLE_REFRESH_TOKEN
+});
+
+// On-Demand Sync: Fetches real data and writes to CSVs before Coral queries it
+async function syncDataToCsvs(emailsCsvPath, calendarCsvPath) {
+    let synced = false;
+    try {
+        if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_REFRESH_TOKEN) {
+            throw new Error("Missing Google OAuth credentials in .env");
+        }
+
+        // 1. Fetch Gmails
+        const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
+        const emailResponse = await gmail.users.messages.list({
+            userId: 'me',
+            q: 'free trial OR auto-renewal OR receipt',
+            maxResults: 5
+        });
+
+        const messages = emailResponse.data.messages || [];
+        let emailCsvContent = "Date,Sender,Snippet\n";
+        
+        for (const msg of messages) {
+            const msgDetail = await gmail.users.messages.get({
+                userId: 'me',
+                id: msg.id,
+                format: 'metadata' 
+            });
+            const headers = msgDetail.data.payload.headers;
+            const date = headers.find(h => h.name === 'Date')?.value || '';
+            const sender = headers.find(h => h.name === 'From')?.value || '';
+            const snippet = (msgDetail.data.snippet || '').replace(/"/g, '""');
+            emailCsvContent += `"${date}","${sender}","${snippet}"\n`;
+        }
+        
+        fs.writeFileSync(emailsCsvPath, emailCsvContent);
+
+        // 2. Fetch Calendar Events
+        const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+        const now = new Date();
+        const startOfDay = new Date(now.setHours(0,0,0,0)).toISOString();
+        const endOfMonth = new Date(now.setMonth(now.getMonth() + 1)).toISOString();
+
+        const calResponse = await calendar.events.list({
+            calendarId: 'primary',
+            timeMin: startOfDay,
+            timeMax: endOfMonth,
+            singleEvents: true,
+            orderBy: 'startTime',
+        });
+
+        let calCsvContent = "startTime,title\n";
+        const events = calResponse.data.items || [];
+        for (const event of events) {
+            const startTime = event.start.dateTime || event.start.date || '';
+            const title = (event.summary || '').replace(/"/g, '""');
+            calCsvContent += `"${startTime}","${title}"\n`;
+        }
+        
+        fs.writeFileSync(calendarCsvPath, calCsvContent);
+        synced = true;
+        console.log("Successfully synced live Google data to CSVs on-demand!");
+    } catch (error) {
+        console.warn("Could not fetch live Google data (Check OAuth tokens). Falling back to existing mock CSVs...", error.message);
+    }
+    return synced;
+}
+
 
 async function extractWealthContext() {
     const emailsCsvPath = path.join(__dirname, '../data/emails.csv');
     const calendarCsvPath = path.join(__dirname, '../data/calendar.csv');
     
+    // On-Demand Data Ingestion
+    await syncDataToCsvs(emailsCsvPath, calendarCsvPath);
+
     // Check if the files exist
     if (!fs.existsSync(emailsCsvPath) || !fs.existsSync(calendarCsvPath)) {
         return {
             budgetStatus: "Healthy",
             totalMonthlySubscriptions: 0,
             detectedRisks: [],
-            geminiInsights: "Waiting for sync script to populate data..."
+            geminiInsights: "Waiting for data..."
         };
     }
 
