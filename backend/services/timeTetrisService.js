@@ -116,7 +116,7 @@ Do not wrap in markdown or backticks.
                 await calendar.events.insert({
                     calendarId: 'primary',
                     resource: {
-                        summary: \`\${event.title} ✨ (Optimized by LifeOS)\`,
+                        summary: `${event.title} ✨ (Optimized by LifeOS)`,
                         description: 'LifeOS dynamically rescheduled this habit to fit your whitespace.',
                         start: {
                             dateTime: event.startTime,
@@ -129,7 +129,7 @@ Do not wrap in markdown or backticks.
                         colorId: '2' // Green color
                     }
                 });
-                console.log(\`Successfully inserted optimized event: \${event.title}\`);
+                console.log(`Successfully inserted optimized event: ${event.title}`);
             } catch (err) {
                 console.error("Failed to insert optimized event to Calendar:", err.message);
             }
