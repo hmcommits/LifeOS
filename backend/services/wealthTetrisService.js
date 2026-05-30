@@ -136,18 +136,30 @@ async function extractWealthContext() {
         const emails = readCsv(emailsCsvPath);
         const calendar = readCsv(calendarCsvPath);
 
-        // Perform CROSS JOIN manually in JS
-        emails.forEach(e => {
-            calendar.forEach(c => {
+        // Perform CROSS JOIN manually in JS, but act like a LEFT JOIN if calendar is empty!
+        if (calendar.length === 0) {
+            emails.forEach(e => {
                 joinedData.push({
                     Date: e[0] || '',
                     Sender: e[1] || '',
                     Snippet: e[2] || '',
-                    CalendarEvent: c[1] || '',
-                    startTime: c[0] || ''
+                    CalendarEvent: 'None',
+                    startTime: 'None'
                 });
             });
-        });
+        } else {
+            emails.forEach(e => {
+                calendar.forEach(c => {
+                    joinedData.push({
+                        Date: e[0] || '',
+                        Sender: e[1] || '',
+                        Snippet: e[2] || '',
+                        CalendarEvent: c[1] || '',
+                        startTime: c[0] || ''
+                    });
+                });
+            });
+        }
         
         // Limit
         joinedData = joinedData.slice(0, 50);
