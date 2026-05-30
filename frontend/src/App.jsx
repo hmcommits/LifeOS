@@ -158,9 +158,10 @@ function App() {
             <p><strong>Live Data:</strong> We securely hook into your Gmail to scan for incoming receipts and trial emails, acting as your personal financial auditor.</p>
             <div className="code-block">
               <code>
-                <span className="js-keyword">const</span> res = <span className="js-keyword">await</span> gmail.users.messages.list(&#123;<br/>
-                &nbsp;&nbsp;q: <span className="js-string">"free trial OR auto-renewal OR receipt"</span><br/>
-                &#125;);
+                <span className="sql-keyword">SELECT</span> e.Date, e.Sender, e.Snippet, c.title<br/>
+                <span className="sql-keyword">FROM</span> 'emails.csv' e<br/>
+                <span className="sql-keyword">CROSS JOIN</span> 'calendar.csv' c<br/>
+                <span className="sql-keyword">LIMIT</span> 50;
               </code>
             </div>
           </div>
@@ -177,10 +178,9 @@ function App() {
             <p><strong>Live Data:</strong> We pull down your entire day from Google Calendar to spot conflicts.</p>
             <div className="code-block">
               <code>
-                <span className="js-keyword">const</span> events = <span className="js-keyword">await</span> calendar.events.list(&#123;<br/>
-                &nbsp;&nbsp;calendarId: <span className="js-string">'primary'</span>,<br/>
-                &nbsp;&nbsp;timeMin: startOfDay<br/>
-                &#125;);
+                <span className="sql-keyword">SELECT</span> c.title, h.title, h.preferredTime<br/>
+                <span className="sql-keyword">FROM</span> 'calendar.csv' c<br/>
+                <span className="sql-keyword">CROSS JOIN</span> 'habits.csv' h;
               </code>
             </div>
           </div>
@@ -197,8 +197,10 @@ function App() {
             <p><strong>Live Data:</strong> The AI acts as a smart parser reading raw, unstructured text messages to find hidden deadlines.</p>
             <div className="code-block">
               <code>
-                <span className="js-string">[14:30] Rahul: Can you look at my resume this weekend?</span><br/>
-                <span className="js-string">[14:35] Me: Yeah sure.</span>
+                <span className="sql-keyword">SELECT</span> Date, Time, Sender, Message<br/>
+                <span className="sql-keyword">FROM</span> 'whatsapp_data.csv'<br/>
+                <span className="sql-keyword">ORDER BY</span> Date <span className="sql-keyword">DESC</span>, Time <span className="sql-keyword">DESC</span><br/>
+                <span className="sql-keyword">LIMIT</span> 50;
               </code>
             </div>
           </div>
