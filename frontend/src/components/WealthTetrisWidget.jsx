@@ -2,36 +2,42 @@ import { useState, useEffect } from 'react';
 
 function WealthTetrisWidget() {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:3001/api/agents/wealth-tetris');
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const result = await response.json();
-        setData(result.data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+  const handleAudit = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('http://localhost:3001/api/agents/wealth-tetris');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
-    };
-
-    fetchData();
-  }, []);
+      const result = await response.json();
+      setData(result.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <section className="widget wealth-tetris-widget">
       <div className="widget-header">
         <h2>Wealth Tetris</h2>
-        <div className={`status-badge ${data?.budgetStatus !== 'Healthy' && !loading ? 'status-warning' : 'status-ok'}`}>
-          {loading ? 'Analyzing...' : data?.budgetStatus}
+        <div className={`status-badge ${data?.budgetStatus !== 'Healthy' && !loading && data ? 'status-warning' : (data ? 'status-ok' : 'status-pending')}`}>
+          {loading ? 'Analyzing...' : (data ? data.budgetStatus : 'Ready for Audit')}
         </div>
       </div>
+
+      {!data && !loading && !error && (
+        <div className="upload-section">
+          <button className="upload-btn" onClick={handleAudit}>
+            Audit My Finances
+          </button>
+        </div>
+      )}
 
       {loading && (
         <div className="loading-state">
@@ -59,7 +65,7 @@ function WealthTetrisWidget() {
           </div>
 
           <div className="gemini-insights glass-panel">
-            <h3><span className="sparkle-icon">✨</span> Gemini Analysis</h3>
+            <h3><span className="sparkle-icon">✨</span> QWEN ANALYSIS</h3>
             <p>{data.geminiInsights}</p>
           </div>
 

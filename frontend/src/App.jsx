@@ -6,28 +6,26 @@ import SocialCapitalWidget from './components/SocialCapitalWidget';
 
 function App() {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('social-capital');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:3001/api/agents/action-bias');
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const result = await response.json();
-        setData(result.data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+  const handleAnalyze = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('http://localhost:3001/api/agents/action-bias');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
-    };
-
-    fetchData();
-  }, []);
+      const result = await response.json();
+      setData(result.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="dashboard">
@@ -117,10 +115,18 @@ function App() {
             <section className="widget action-bias-widget">
               <div className="widget-header">
                 <h2>Action-Bias Tracker</h2>
-                <div className={`status-badge ${data?.interventionRequired ? 'status-warning' : 'status-ok'}`}>
-                  {loading ? 'Analyzing...' : (data?.interventionRequired ? 'Intervention Needed' : 'Healthy')}
+                <div className={`status-badge ${data?.interventionRequired ? 'status-warning' : (data ? 'status-ok' : 'status-pending')}`}>
+                  {loading ? 'Analyzing...' : (data ? (data.interventionRequired ? 'Intervention Needed' : 'Healthy') : 'Awaiting Scan')}
                 </div>
               </div>
+              
+              {!data && !loading && !error && (
+                <div className="upload-section">
+                  <button className="upload-btn" onClick={handleAnalyze}>
+                    Scan Action-Bias
+                  </button>
+                </div>
+              )}
 
               {loading && (
                 <div className="loading-state">

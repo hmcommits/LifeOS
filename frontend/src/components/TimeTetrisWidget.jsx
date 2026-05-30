@@ -2,36 +2,42 @@ import { useState, useEffect } from 'react';
 
 function TimeTetrisWidget() {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:3001/api/agents/time-tetris');
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const result = await response.json();
-        setData(result.data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+  const handleOptimize = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('http://localhost:3001/api/agents/time-tetris');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
-    };
-
-    fetchData();
-  }, []);
+      const result = await response.json();
+      setData(result.data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <section className="widget time-tetris-widget">
       <div className="widget-header">
         <h2>Time-Tetris</h2>
-        <div className={`status-badge ${data?.rescheduledCount > 0 ? 'status-warning' : 'status-ok'}`}>
-          {loading ? 'Optimizing...' : (data?.rescheduledCount > 0 ? `${data.rescheduledCount} Rescheduled` : 'On Time')}
+        <div className={`status-badge ${data?.rescheduledCount > 0 ? 'status-warning' : (data ? 'status-ok' : 'status-pending')}`}>
+          {loading ? 'Optimizing...' : (data ? (data.rescheduledCount > 0 ? `${data.rescheduledCount} Rescheduled` : 'On Time') : 'Ready')}
         </div>
       </div>
+
+      {!data && !loading && !error && (
+        <div className="upload-section">
+          <button className="upload-btn" onClick={handleOptimize}>
+            Optimize My Schedule
+          </button>
+        </div>
+      )}
 
       {loading && (
         <div className="loading-state">
