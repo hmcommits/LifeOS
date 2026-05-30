@@ -33,7 +33,7 @@ const SocialCapitalWidget = () => {
     } finally {
       setUploading(false);
     }
-
+  };
 
   return (
     <section className="widget social-capital-widget">
