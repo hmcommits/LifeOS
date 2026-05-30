@@ -63,6 +63,19 @@ const SocialCapitalWidget = () => {
         </div>
       </div>
 
+      <div className="upload-section" style={{ margin: '1rem 0', display: 'flex', justifyContent: 'center' }}>
+        <label className={`upload-btn ${uploading ? 'disabled' : ''}`}>
+          {uploading ? 'Processing Chat...' : 'Upload WhatsApp Export (.txt)'}
+          <input 
+            type="file" 
+            accept=".txt" 
+            onChange={handleFileUpload} 
+            disabled={uploading} 
+            style={{ display: 'none' }} 
+          />
+        </label>
+      </div>
+
       {loading && (
         <div className="loading-state">
           <div className="spinner"></div>
@@ -79,19 +92,6 @@ const SocialCapitalWidget = () => {
 
       {!loading && !error && data && (
         <div className="widget-content">
-          <div className="upload-section">
-            <label className={`upload-btn ${uploading ? 'disabled' : ''}`}>
-              {uploading ? 'Processing Chat...' : 'Upload WhatsApp Export (.txt)'}
-              <input 
-                type="file" 
-                accept=".txt" 
-                onChange={handleFileUpload} 
-                disabled={uploading} 
-                style={{ display: 'none' }} 
-              />
-            </label>
-          </div>
-
           <div className="reminders-list">
             <h3>Upcoming Relationship Action Items</h3>
             {data.upcomingReminders && data.upcomingReminders.length > 0 ? (
