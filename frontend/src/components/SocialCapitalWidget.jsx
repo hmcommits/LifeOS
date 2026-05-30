@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 const SocialCapitalWidget = () => {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [uploading, setUploading] = useState(false);
 
@@ -33,33 +33,14 @@ const SocialCapitalWidget = () => {
     } finally {
       setUploading(false);
     }
-  };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:3001/api/agents/social-capital');
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const result = await response.json();
-        setData(result.data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   return (
     <section className="widget social-capital-widget">
       <div className="widget-header">
         <h2>Social Capital Keeper</h2>
-        <div className="status-badge status-ok">
-          {loading || uploading ? 'Scanning Logs...' : 'CRM Active'}
+        <div className={`status-badge ${data ? 'status-ok' : 'status-pending'}`}>
+          {loading || uploading ? 'Scanning Logs...' : (data ? 'CRM Active' : 'Ready')}
         </div>
       </div>
 
