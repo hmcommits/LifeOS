@@ -33,9 +33,9 @@ If a friend texts you, *"Can you look at my resume this weekend?"* and you casua
 
 ## 2. Wealth Tetris (Financial Leak Detector)
 
-**The Concept:** An automated financial audit that catches phantom expenses (free trials, auto-renewals) before they silently charge your bank account.
+**The Concept:** An automated financial audit that catches phantom expenses (free trials, auto-renewals) and upcoming bills (like electricity or internet) before they silently charge your bank account or incur late fees.
 
-**How it accesses data:** The backend uses your secure Google OAuth tokens (`googleapis` library) to scan your live Gmail inbox for keywords like "free trial" or "receipt". It simultaneously queries your Google Calendar to grab your upcoming schedule. Both datasets are formatted into temporary CSVs to be joined by Coral.
+**How it accesses data:** The backend uses your secure Google OAuth tokens (`googleapis` library) to scan your live Gmail inbox for keywords like "free trial", "receipt", or "bill due". It simultaneously queries your Google Calendar to grab your upcoming schedule. Both datasets are formatted into temporary CSVs to be joined by Coral.
 
 **The Coral SQL Join:**
 ```sql

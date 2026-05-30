@@ -26,7 +26,7 @@ async function syncDataToCsvs(emailsCsvPath, calendarCsvPath) {
         const gmail = google.gmail({ version: 'v1', auth: oauth2Client });
         const emailResponse = await gmail.users.messages.list({
             userId: 'me',
-            q: 'free trial OR auto-renewal OR receipt',
+            q: 'free trial OR auto-renewal OR receipt OR bill due',
             maxResults: 5
         });
 
@@ -180,8 +180,8 @@ Current Monthly Subscription Limit: ₹4000
 
 Analyze this joined data to extract:
 1. An overall budget status ("Healthy", "At Risk", "Exceeded").
-2. The total calculated monthly subscriptions (in ₹, return only number).
-3. Any detected risks (e.g., free trials ending soon). Check the CalendarEvent field to see if a cancellation reminder already exists on the calendar!
+2. The total calculated monthly subscriptions and bills due (in ₹, return only number).
+3. Any detected risks (e.g., free trials ending soon, or upcoming bills due like electricity). Check the CalendarEvent field to see if a reminder already exists on the calendar!
 
 Example Output if a trial is found:
 {

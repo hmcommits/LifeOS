@@ -8,7 +8,7 @@ function App() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('action-bias');
+  const [activeTab, setActiveTab] = useState('social-capital');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,6 +38,18 @@ function App() {
 
       <nav className="tab-nav">
         <button 
+          className={`tab-btn ${activeTab === 'social-capital' ? 'active' : ''}`}
+          onClick={() => setActiveTab('social-capital')}
+        >
+          Social Capital
+        </button>
+        <button 
+          className={`tab-btn ${activeTab === 'time-tetris' ? 'active' : ''}`}
+          onClick={() => setActiveTab('time-tetris')}
+        >
+          Time-Tetris
+        </button>
+        <button 
           className={`tab-btn ${activeTab === 'action-bias' ? 'active' : ''}`}
           onClick={() => setActiveTab('action-bias')}
         >
@@ -49,22 +61,49 @@ function App() {
         >
           Wealth Tetris
         </button>
-        <button 
-          className={`tab-btn ${activeTab === 'time-tetris' ? 'active' : ''}`}
-          onClick={() => setActiveTab('time-tetris')}
-        >
-          Time-Tetris
-        </button>
-        <button 
-          className={`tab-btn ${activeTab === 'social-capital' ? 'active' : ''}`}
-          onClick={() => setActiveTab('social-capital')}
-        >
-          Social Capital
-        </button>
       </nav>
 
       <main className="tab-container">
         
+        {/* Social Capital Tab */}
+        <div className={`tab-content ${activeTab === 'social-capital' ? 'active' : 'hidden'}`}>
+          <div className="widget-col">
+            <SocialCapitalWidget />
+          </div>
+          <div className="architecture-panel">
+            <h3>Under the Hood ⚙️</h3>
+            <p><strong>The Goal:</strong> Never forget a promise made to a friend. This extracts action items from your casual chats.</p>
+            <p><strong>Live Data:</strong> The AI acts as a smart parser reading raw, unstructured text messages to find hidden deadlines.</p>
+            <div className="code-block">
+              <code>
+                <span className="sql-keyword">SELECT</span> Date, Time, Sender, Message<br/>
+                <span className="sql-keyword">FROM</span> 'whatsapp_data.csv'<br/>
+                <span className="sql-keyword">ORDER BY</span> Date <span className="sql-keyword">DESC</span>, Time <span className="sql-keyword">DESC</span><br/>
+                <span className="sql-keyword">LIMIT</span> 50;
+              </code>
+            </div>
+          </div>
+        </div>
+
+        {/* Time-Tetris Tab */}
+        <div className={`tab-content ${activeTab === 'time-tetris' ? 'active' : 'hidden'}`}>
+          <div className="widget-col">
+            <TimeTetrisWidget />
+          </div>
+          <div className="architecture-panel">
+            <h3>Under the Hood ⚙️</h3>
+            <p><strong>The Goal:</strong> Automatically fix overlapping meetings and find hidden free time in your schedule.</p>
+            <p><strong>Live Data:</strong> We pull down your entire day from Google Calendar to spot conflicts.</p>
+            <div className="code-block">
+              <code>
+                <span className="sql-keyword">SELECT</span> c.title, h.title, h.preferredTime<br/>
+                <span className="sql-keyword">FROM</span> 'calendar.csv' c<br/>
+                <span className="sql-keyword">CROSS JOIN</span> 'habits.csv' h;
+              </code>
+            </div>
+          </div>
+        </div>
+
         {/* Action Bias Tab */}
         <div className={`tab-content ${activeTab === 'action-bias' ? 'active' : 'hidden'}`}>
           <div className="widget-col">
@@ -161,45 +200,6 @@ function App() {
                 <span className="sql-keyword">SELECT</span> e.Date, e.Sender, e.Snippet, c.title<br/>
                 <span className="sql-keyword">FROM</span> 'emails.csv' e<br/>
                 <span className="sql-keyword">CROSS JOIN</span> 'calendar.csv' c<br/>
-                <span className="sql-keyword">LIMIT</span> 50;
-              </code>
-            </div>
-          </div>
-        </div>
-
-        {/* Time-Tetris Tab */}
-        <div className={`tab-content ${activeTab === 'time-tetris' ? 'active' : 'hidden'}`}>
-          <div className="widget-col">
-            <TimeTetrisWidget />
-          </div>
-          <div className="architecture-panel">
-            <h3>Under the Hood ⚙️</h3>
-            <p><strong>The Goal:</strong> Automatically fix overlapping meetings and find hidden free time in your schedule.</p>
-            <p><strong>Live Data:</strong> We pull down your entire day from Google Calendar to spot conflicts.</p>
-            <div className="code-block">
-              <code>
-                <span className="sql-keyword">SELECT</span> c.title, h.title, h.preferredTime<br/>
-                <span className="sql-keyword">FROM</span> 'calendar.csv' c<br/>
-                <span className="sql-keyword">CROSS JOIN</span> 'habits.csv' h;
-              </code>
-            </div>
-          </div>
-        </div>
-
-        {/* Social Capital Tab */}
-        <div className={`tab-content ${activeTab === 'social-capital' ? 'active' : 'hidden'}`}>
-          <div className="widget-col">
-            <SocialCapitalWidget />
-          </div>
-          <div className="architecture-panel">
-            <h3>Under the Hood ⚙️</h3>
-            <p><strong>The Goal:</strong> Never forget a promise made to a friend. This extracts action items from your casual chats.</p>
-            <p><strong>Live Data:</strong> The AI acts as a smart parser reading raw, unstructured text messages to find hidden deadlines.</p>
-            <div className="code-block">
-              <code>
-                <span className="sql-keyword">SELECT</span> Date, Time, Sender, Message<br/>
-                <span className="sql-keyword">FROM</span> 'whatsapp_data.csv'<br/>
-                <span className="sql-keyword">ORDER BY</span> Date <span className="sql-keyword">DESC</span>, Time <span className="sql-keyword">DESC</span><br/>
                 <span className="sql-keyword">LIMIT</span> 50;
               </code>
             </div>
