@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-function MoneySentinelWidget() {
+function WealthTetrisWidget() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -8,7 +8,7 @@ function MoneySentinelWidget() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/agents/money-sentinel');
+        const response = await fetch('http://localhost:3001/api/agents/wealth-tetris');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -25,9 +25,9 @@ function MoneySentinelWidget() {
   }, []);
 
   return (
-    <section className="widget money-sentinel-widget">
+    <section className="widget wealth-tetris-widget">
       <div className="widget-header">
-        <h2>Money Sentinel</h2>
+        <h2>Wealth Tetris</h2>
         <div className={`status-badge ${data?.budgetStatus !== 'Healthy' && !loading ? 'status-warning' : 'status-ok'}`}>
           {loading ? 'Analyzing...' : data?.budgetStatus}
         </div>
@@ -91,4 +91,4 @@ function MoneySentinelWidget() {
   );
 }
 
-export default MoneySentinelWidget;
+export default WealthTetrisWidget;

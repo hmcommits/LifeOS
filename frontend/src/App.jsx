@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './index.css';
-import MoneySentinelWidget from './components/MoneySentinelWidget';
+import WealthTetrisWidget from './components/WealthTetrisWidget';
 import TimeTetrisWidget from './components/TimeTetrisWidget';
 import SocialCapitalWidget from './components/SocialCapitalWidget';
 
@@ -44,10 +44,10 @@ function App() {
           Action-Bias
         </button>
         <button 
-          className={`tab-btn ${activeTab === 'money-sentinel' ? 'active' : ''}`}
-          onClick={() => setActiveTab('money-sentinel')}
+          className={`tab-btn ${activeTab === 'wealth-tetris' ? 'active' : ''}`}
+          onClick={() => setActiveTab('wealth-tetris')}
         >
-          Money Sentinel
+          Wealth Tetris
         </button>
         <button 
           className={`tab-btn ${activeTab === 'time-tetris' ? 'active' : ''}`}
@@ -147,10 +147,10 @@ function App() {
           </div>
         </div>
 
-        {/* Money Sentinel Tab */}
-        <div className={`tab-content ${activeTab === 'money-sentinel' ? 'active' : 'hidden'}`}>
+        {/* Wealth Tetris Tab */}
+        <div className={`tab-content ${activeTab === 'wealth-tetris' ? 'active' : 'hidden'}`}>
           <div className="widget-col">
-            <MoneySentinelWidget />
+            <WealthTetrisWidget />
           </div>
           <div className="architecture-panel">
             <h3>Under the Hood ⚙️</h3>

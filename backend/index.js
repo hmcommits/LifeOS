@@ -13,12 +13,12 @@ app.get('/api/health', (req, res) => {
 });
 
 const actionBiasRouter = require('./routes/actionBias');
-const moneySentinelRouter = require('./routes/moneySentinel');
+const wealthTetrisRouter = require('./routes/wealthTetris');
 const timeTetrisRouter = require('./routes/timeTetris');
 const socialCapitalRouter = require('./routes/socialCapital');
 
 app.use('/api/agents', actionBiasRouter);
-app.use('/api/agents', moneySentinelRouter);
+app.use('/api/agents', wealthTetrisRouter);
 app.use('/api/agents', timeTetrisRouter);
 app.use('/api/agents', socialCapitalRouter);
 

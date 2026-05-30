@@ -1,0 +1,128 @@
+const { analyzeDataWithLocalAi } = require('../localAiIntegration');
+const { executeCoralQuery } = require('../coralIntegration');
+const fs = require('fs');
+const path = require('path');
+
+async function extractWealthContext() {
+    const emailsCsvPath = path.join(__dirname, '../data/emails.csv');
+    const calendarCsvPath = path.join(__dirname, '../data/calendar.csv');
+    
+    // Check if the files exist
+    if (!fs.existsSync(emailsCsvPath) || !fs.existsSync(calendarCsvPath)) {
+        return {
+            budgetStatus: "Healthy",
+            totalMonthlySubscriptions: 0,
+            detectedRisks: [],
+            geminiInsights: "Waiting for sync script to populate data..."
+        };
+    }
+
+    let joinedData = [];
+    try {
+        // 1. Attempt to Query and JOIN using Coral
+        const sqlEmails = emailsCsvPath.replace(/\\/g, '/');
+        const sqlCalendar = calendarCsvPath.replace(/\\/g, '/');
+        
+        const query = `
+            SELECT 
+                e.Date, e.Sender, e.Snippet, 
+                c.title AS CalendarEvent, c.startTime 
+            FROM '${sqlEmails}' e 
+            CROSS JOIN '${sqlCalendar}' c
+            LIMIT 50
+        `;
+        joinedData = await executeCoralQuery(query);
+    } catch (coralError) {
+        console.warn("Coral could not perform the JOIN natively (missing local_file plugin). Falling back to Node.js manual JOIN...");
+        
+        // Fallback: Read CSV natively using Node.js
+        const readCsv = (filePath) => {
+            const data = fs.readFileSync(filePath, 'utf8');
+            const lines = data.split('\n').filter(l => l.trim() !== '');
+            lines.shift(); // Skip header
+            const csvRegex = /(?:^|,)(?:"([^"]*(?:""[^"]*)*)"|([^,]*))/g;
+            return lines.map(line => {
+                const parts = [];
+                let match;
+                while (match = csvRegex.exec(line)) {
+                    let val = match[1] !== undefined ? match[1] : match[2];
+                    if (val) val = val.replace(/""/g, '"');
+                    parts.push(val);
+                }
+                return parts;
+            });
+        };
+
+        const emails = readCsv(emailsCsvPath);
+        const calendar = readCsv(calendarCsvPath);
+
+        // Perform CROSS JOIN manually in JS
+        emails.forEach(e => {
+            calendar.forEach(c => {
+                joinedData.push({
+                    Date: e[0] || '',
+                    Sender: e[1] || '',
+                    Snippet: e[2] || '',
+                    CalendarEvent: c[1] || '',
+                    startTime: c[0] || ''
+                });
+            });
+        });
+        
+        // Limit
+        joinedData = joinedData.slice(0, 50);
+    }
+
+    if (!joinedData || joinedData.length === 0) {
+        return { budgetStatus: "Healthy", totalMonthlySubscriptions: 0, detectedRisks: [], geminiInsights: "No data found." };
+    }
+
+    // 2. Construct Prompt for AI
+    const prompt = `
+You are the "Wealth Tetris" AI in LifeOS.
+Your goal is to detect financial leaks and evaluate subscriptions based on joined email and calendar data.
+
+Here is the joined dataset showing recent emails alongside existing calendar events:
+${JSON.stringify(joinedData, null, 2)}
+
+Current Monthly Subscription Limit: ₹4000
+
+Analyze this joined data to extract:
+1. An overall budget status ("Healthy", "At Risk", "Exceeded").
+2. The total calculated monthly subscriptions (in ₹, return only number).
+3. Any detected risks (e.g., free trials ending soon). Check the CalendarEvent field to see if a cancellation reminder already exists on the calendar!
+
+Return the response STRICTLY as a JSON object with this exact structure:
+{
+    "budgetStatus": "<string>",
+    "totalMonthlySubscriptions": <number>,
+    "detectedRisks": [
+        {
+            "service": "<string>",
+            "trialEndDate": "<YYYY-MM-DD>",
+            "cost": <number>,
+            "actionTaken": "<A string indicating if a calendar event already exists, or if one needs to be created>"
+        }
+    ],
+    "geminiInsights": "<A direct warning or insight. Mention if a calendar event already exists for cancellation based on the joined data.>"
+}
+Do not include any markdown formatting like \`\`\`json. Return only the JSON string.
+`;
+
+    try {
+        let geminiResponseText = await analyzeDataWithLocalAi(prompt, {});
+        geminiResponseText = geminiResponseText.replace(/```json/g, '').replace(/```/g, '').trim();
+        const insightsData = JSON.parse(geminiResponseText);
+        return insightsData;
+    } catch (error) {
+        console.error("Error parsing AI response in Wealth Tetris:", error);
+        return {
+            budgetStatus: "Healthy",
+            totalMonthlySubscriptions: 0,
+            detectedRisks: [],
+            geminiInsights: "Warning: AI failed to parse data."
+        };
+    }
+}
+
+module.exports = { extractWealthContext };
