@@ -68,7 +68,7 @@ function TimeTetrisWidget() {
           </div>
 
           <div className="gemini-insights glass-panel">
-            <h3><span className="sparkle-icon">✨</span> Gemini Insights</h3>
+            <h3><span className="sparkle-icon">✨</span> QWEN ANALYSIS</h3>
             <p>{data.geminiInsights}</p>
           </div>
         </div>

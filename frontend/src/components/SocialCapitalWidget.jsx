@@ -66,7 +66,7 @@ const SocialCapitalWidget = () => {
       {loading && (
         <div className="loading-state">
           <div className="spinner"></div>
-          <p>Extracting social context via Gemini...</p>
+          <p>Extracting social context via Qwen...</p>
         </div>
       )}
 
