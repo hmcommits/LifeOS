@@ -219,6 +219,14 @@ Do not include any markdown formatting like \`\`\`json. Return only the JSON str
         let geminiResponseText = await analyzeDataWithLocalAi(prompt, joinedData);
         geminiResponseText = geminiResponseText.replace(/```json/g, '').replace(/```/g, '').trim();
         const insightsData = JSON.parse(geminiResponseText);
+        
+        // FIX: Qwen 3B often hallucinates math or confuses the 4000 limit with the total.
+        // We calculate the sum programmatically from the extracted risks to ensure 100% accuracy.
+        if (insightsData.detectedRisks && Array.isArray(insightsData.detectedRisks)) {
+            const calculatedTotal = insightsData.detectedRisks.reduce((sum, risk) => sum + (Number(risk.cost) || 0), 0);
+            insightsData.totalMonthlySubscriptions = calculatedTotal;
+        }
+
         return insightsData;
     } catch (error) {
         console.error("Error parsing AI response in Wealth Tetris:", error);
