@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 const SocialCapitalWidget = () => {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [uploading, setUploading] = useState(false);
 
@@ -35,29 +35,31 @@ const SocialCapitalWidget = () => {
     }
   };
 
-  const handleScan = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch('http://localhost:3001/api/agents/social-capital');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/agents/social-capital');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        setData(result.data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
-      const result = await response.json();
-      setData(result.data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <section className="widget social-capital-widget">
       <div className="widget-header">
         <h2>Social Capital Keeper</h2>
-        <div className={`status-badge ${data ? 'status-ok' : 'status-pending'}`}>
-          {loading || uploading ? 'Scanning Logs...' : (data ? 'CRM Active' : 'Ready')}
+        <div className="status-badge status-ok">
+          {loading || uploading ? 'Scanning Logs...' : 'CRM Active'}
         </div>
       </div>
 
@@ -75,26 +77,21 @@ const SocialCapitalWidget = () => {
         </div>
       )}
 
-      {!loading && !error && (
-        <div className="upload-section" style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-          <label className={`upload-btn ${uploading ? 'disabled' : ''}`}>
-            {uploading ? 'Processing Chat...' : 'Upload WhatsApp Export (.txt)'}
-            <input 
-              type="file" 
-              accept=".txt" 
-              onChange={handleFileUpload} 
-              disabled={uploading} 
-              style={{ display: 'none' }} 
-            />
-          </label>
-          <button className="upload-btn" onClick={handleScan} disabled={loading}>
-            Scan Existing DB
-          </button>
-        </div>
-      )}
-
       {!loading && !error && data && (
         <div className="widget-content">
+          <div className="upload-section">
+            <label className={`upload-btn ${uploading ? 'disabled' : ''}`}>
+              {uploading ? 'Processing Chat...' : 'Upload WhatsApp Export (.txt)'}
+              <input 
+                type="file" 
+                accept=".txt" 
+                onChange={handleFileUpload} 
+                disabled={uploading} 
+                style={{ display: 'none' }} 
+              />
+            </label>
+          </div>
+
           <div className="reminders-list">
             <h3>Upcoming Relationship Action Items</h3>
             {data.upcomingReminders && data.upcomingReminders.length > 0 ? (

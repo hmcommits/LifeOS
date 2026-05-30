@@ -206,8 +206,8 @@ function App() {
           </div>
           <div className="architecture-panel">
             <h3>Under the Hood ⚙️</h3>
-            <p><strong>The Goal:</strong> Catch sneaky auto-renewals and free trials before they charge your card.</p>
-            <p><strong>Live Data:</strong> We securely hook into your Gmail to scan for incoming receipts and trial emails, acting as your personal financial auditor.</p>
+            <p><strong>The Goal:</strong> Track upcoming utility bills and financial due dates, while also catching sneaky auto-renewals and free trials before they charge your card.</p>
+            <p><strong>Live Data:</strong> We securely hook into your Gmail to scan for "bill due" notifications, incoming receipts, and trial emails, acting as your personal financial auditor.</p>
             <div className="code-block">
               <code>
                 <span className="sql-keyword">SELECT</span> e.Date, e.Sender, e.Snippet, c.title<br/>
