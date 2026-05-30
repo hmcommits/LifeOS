@@ -174,8 +174,7 @@ async function extractWealthContext() {
 You are the "Wealth Tetris" AI in LifeOS.
 Your goal is to detect financial leaks and evaluate subscriptions based on joined email and calendar data.
 
-Here is the joined dataset showing recent emails alongside existing calendar events:
-${JSON.stringify(joinedData, null, 2)}
+Here is the joined dataset showing recent emails alongside existing calendar events.
 
 Current Monthly Subscription Limit: ₹4000
 
@@ -183,6 +182,21 @@ Analyze this joined data to extract:
 1. An overall budget status ("Healthy", "At Risk", "Exceeded").
 2. The total calculated monthly subscriptions (in ₹, return only number).
 3. Any detected risks (e.g., free trials ending soon). Check the CalendarEvent field to see if a cancellation reminder already exists on the calendar!
+
+Example Output if a trial is found:
+{
+    "budgetStatus": "Healthy",
+    "totalMonthlySubscriptions": 3500,
+    "detectedRisks": [
+        {
+            "service": "Adobe Creative Cloud",
+            "trialEndDate": "2026-06-02",
+            "cost": 3500,
+            "actionTaken": "No calendar event exists, please create one."
+        }
+    ],
+    "geminiInsights": "Warning: Adobe Creative Cloud free trial ends on 2026-06-02. It will cost ₹3500/month."
+}
 
 Return the response STRICTLY as a JSON object with this exact structure:
 {
@@ -202,7 +216,7 @@ Do not include any markdown formatting like \`\`\`json. Return only the JSON str
 `;
 
     try {
-        let geminiResponseText = await analyzeDataWithLocalAi(prompt, {});
+        let geminiResponseText = await analyzeDataWithLocalAi(prompt, joinedData);
         geminiResponseText = geminiResponseText.replace(/```json/g, '').replace(/```/g, '').trim();
         const insightsData = JSON.parse(geminiResponseText);
         return insightsData;
