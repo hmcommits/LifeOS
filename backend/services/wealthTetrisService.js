@@ -107,8 +107,8 @@ async function extractWealthContext() {
             SELECT 
                 e.Date, e.Sender, e.Snippet, 
                 c.title AS CalendarEvent, c.startTime 
-            FROM '${sqlEmails}' e 
-            CROSS JOIN '${sqlCalendar}' c
+            FROM '${sqlEmails}' AS e 
+            CROSS JOIN '${sqlCalendar}' AS c
             LIMIT 50
         `;
         joinedData = await executeCoralQuery(query);
