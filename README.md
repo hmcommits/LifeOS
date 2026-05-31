@@ -11,9 +11,16 @@ LifeOS is an intelligent, privacy-first local assistant designed to aggregate sc
 
 The system features four main pillars:
 1. **Social Capital Keeper:** Translates unstructured WhatsApp chat exports into a database to detect "hidden promises" and commitments made to friends and colleagues.
+<br><img src="assets/social_capital.png" alt="Social Capital Keeper Demo" width="700"/>
+
 2. **Wealth Tetris:** Cross-references live Gmail receipts with Google Calendar to detect upcoming utility bills and sneaky auto-renewals before they charge you.
+<br><img src="assets/wealth_tetris.png" alt="Wealth Tetris Demo" width="700"/>
+
 3. **Action-Bias Tracker:** Compares scheduled coding hours (Google Calendar) against actual output (GitHub commits) to prevent procrastination and "tutorial hell."
+<br><img src="assets/action_bias.png" alt="Action Bias Tracker Demo" width="700"/>
+
 4. **Time-Tetris:** Autonomously reschedules non-negotiable daily habits (like gym sessions) into available whitespace when surprise calendar events ruin your original routine.
+<br><img src="assets/time_tetris.png" alt="Time Tetris Demo" width="700"/>
 
 ## How I Used Coral
 LifeOS relies entirely on **Coral SQL** as its core data orchestration layer, completely eliminating traditional API integration bottlenecks. Coral acts as a universal translator, allowing the local AI assistant to query the user's entire digital life through standardized, cross-source SQL `JOIN` operations.
