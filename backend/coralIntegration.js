@@ -27,7 +27,7 @@ async function executeCoralQuery(sqlQuery) {
         const data = JSON.parse(stdout);
         return data;
     } catch (error) {
-        console.error('Failed to execute Coral query:', error);
+        // Suppress massive stack trace to keep console clean for demo, caller handles fallback gracefully
         throw error;
     }
 }
