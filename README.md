@@ -32,7 +32,7 @@ LifeOS relies entirely on **Coral SQL** as its core data orchestration layer, co
 ## Tech Stack
 - **Frontend:** React + Vite (Neo-Brutalist UI)
 - **Backend:** Node.js + Express
-- **AI Models:** Local LLMs (via Ollama/Qwen) & Gemini 3.1 Pro (Development phase)
+- **AI Models:** Local LLMs (via Ollama/Qwen)
 - **Data Pipeline:** Coral SQL
 
 ## Demo, Repo, Setup
@@ -67,3 +67,5 @@ LifeOS relies entirely on **Coral SQL** as its core data orchestration layer, co
 - **Complete Financial Hub:** Upgrading Wealth Tetris to support smart receipt tracking and utility bill processing via local OCR (PDFs/Images) and local bank SMS alert interception.
 - **Voice-Activated Logging:** Introducing Voice-to-Text inputs that instantly translate to organized Coral database entries (e.g., "Hey LifeOS, I just spent ₹500 on groceries").
 - **Deepening the Relationship Matrix:** Building an automated pipeline that safely updates communication logs to automatically track fading professional contacts without relying on manual chat exports.
+
+*(A quick note behind the scenes: To help write the code and build this project faster, the Antigravity AI IDE was used strictly during the development phase. The LifeOS system itself runs entirely independently on its own!)*
