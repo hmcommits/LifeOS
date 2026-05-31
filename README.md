@@ -15,7 +15,7 @@ The system features four main pillars:
 3. **Action-Bias Tracker:** Compares scheduled coding hours (Google Calendar) against actual output (GitHub commits) to prevent procrastination and "tutorial hell."
 4. **Time-Tetris:** Autonomously reschedules non-negotiable daily habits (like gym sessions) into available whitespace when surprise calendar events ruin your original routine.
 
-## How We Used Coral
+## How I Used Coral
 LifeOS relies entirely on **Coral SQL** as its core data orchestration layer, completely eliminating traditional API integration bottlenecks. Coral acts as a universal translator, allowing the local AI assistant to query the user's entire digital life through standardized, cross-source SQL `JOIN` operations.
 
 - **Unstructured Data to SQL Translation:** Coral instantly parses and structures messy WhatsApp chat exports into clean, read-only SQL tables, filtering out formatting junk before it reaches the AI.
@@ -28,6 +28,12 @@ LifeOS relies entirely on **Coral SQL** as its core data orchestration layer, co
 - **Gmail API:** For extracting receipts, auto-renewals, and financial notices.
 - **GitHub API:** For tracking live code commits and repository activity.
 - **WhatsApp Chat Exports:** Local `.txt` and `.csv` files for relationship and commitment tracking.
+
+## Tech Stack
+- **Frontend:** React + Vite (Neo-Brutalist UI)
+- **Backend:** Node.js + Express
+- **AI Models:** Local LLMs (via Ollama/Qwen) & Gemini 3.1 Pro (Development phase)
+- **Data Pipeline:** Coral SQL
 
 ## Demo, Repo, Setup
 
