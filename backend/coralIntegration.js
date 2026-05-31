@@ -10,8 +10,10 @@ const execPromise = util.promisify(exec);
  */
 async function executeCoralQuery(sqlQuery) {
     try {
+        // Strip newlines to prevent Windows cmd.exe from truncating the command
+        const singleLineQuery = sqlQuery.replace(/\r?\n|\r/g, ' ').replace(/\s+/g, ' ').trim();
         // Run coral sql command with json format. Ensure double quotes around the query.
-        const { stdout, stderr } = await execPromise(`coral sql --format json "${sqlQuery}"`);
+        const { stdout, stderr } = await execPromise(`coral sql --format json "${singleLineQuery}"`);
         
         if (stderr) {
             console.warn('Coral Warning/Error:', stderr);
